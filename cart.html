@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang | GoHuB Menu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cart.css">
+
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a class="brand-logo" href="#home"> <i class="fas fa-utensils logo-icon"></i>GoHuB Menu</a>
+            <a href="index.html" class="back-link">
+                <i class="fas fa-chevron-left"></i> Lanjut Belanja
+            </a>
+        </div>
+    </nav>
+
+    <main class="container main-content-padding">
+
+        <header class="page-header-cart">
+            <h1><i class="fas fa-shopping-bag"></i> Keranjang Saya</h1>
+        </header>
+
+        <div class="cart-layout">
+
+            <section class="cart-items-list" id="cart-items-container">
+            </section>
+
+            <section class="cart-summary-card">
+                <h2 class="summary-title">Ringkasan Pesanan</h2>
+
+                <div class="summary-line">
+                    <span class="label">Subtotal (<span id="total-items-count">0</span> Item)</span>
+                    <span class="value" id="subtotal-price">Rp 0</span>
+                </div>
+
+                <div class="summary-line">
+                    <span class="label">Biaya Layanan</span>
+                    <span class="value" id="service-fee">Rp 5.000</span>
+                </div>
+
+                <div class="summary-separator"></div>
+
+                <div class="summary-line total-line">
+                    <span class="label">Total Pembayaran</span>
+                    <span class="value total-price" id="total-payment">Rp 5.000</span>
+                </div>
+
+                <button class="btn-checkout" id="checkout-btn" disabled>
+                    Lanjutkan Pembayaran <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <p class="empty-cart-message-placeholder" id="empty-cart-message" style="display: none;">Keranjang
+                    kosong. Yuk, pilih menu favoritmu!</p>
+            </section>
+        </div>
+
+    </main>
+
+
+
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <i class="fas fa-receipt modal-icon-success"></i>
+                <h4 class="modal-title-custom">Pesanan Berhasil!</h4>
+            </div>
+            <div class="modal-body-custom">
+                <p>Pesanan Anda sedang diproses. Silakan tunggu notifikasi selanjutnya.</p>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-primary-custom" onclick="window.location.href='index.html'">Kembali ke
+                    Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SERVICE_FEE = 5000;
+
+        // FUNGSI UTAMA UNTUK MENGAMBIL DATA DARI LOCAL STORAGE (SAMA DENGAN index.html)
+        function getCart() {
+            const cart = localStorage.getItem('cart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCartItems();
+            updateSummary();
+        }
+
+        // FUNGSI UNTUK MENGUBAH KUANTITAS
+        function updateQuantity(id, change) {
+            let cart = getCart();
+            const item = cart.find(i => i.id === id);
+
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    // Hapus item jika kuantitas <= 0
+                    cart = cart.filter(i => i.id !== id);
+                }
+                saveCart(cart);
+            }
+        }
+
+        // FUNGSI UNTUK MENGHAPUS ITEM DARI KERANJANG
+        function removeItem(id) {
+            let cart = getCart();
+            cart = cart.filter(i => i.id !== id);
+            saveCart(cart);
+        }
+
+        // FUNGSI UTAMA UNTUK MEREGISTRASIKAN CART ITEM
+        function createCartItemHTML(item) {
+            const totalPrice = item.price * item.quantity;
+            return `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.name}" class="item-image">
+                    <div class="item-details">
+                        <h3 class="item-name">${item.name}</h3>
+                        <p class="item-price">Rp ${item.price.toLocaleString('id-ID')}</p>
+                    </div>
+                    
+                    <div class="item-controls">
+                        <div class="quantity-control-group">
+                            <button class="btn-qty btn-danger-icon" onclick="updateQuantity(${item.id}, -1)">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="quantity-input" value="${item.quantity}" min="1" readonly>
+                            <button class="btn-qty btn-primary-icon" onclick="updateQuantity(${item.id}, 1)">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="item-total-price">
+                        Rp ${totalPrice.toLocaleString('id-ID')}
+                    </div>
+                    
+                    <button class="btn-remove" onclick="removeItem(${item.id})">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // FUNGSI UNTUK MERENDER SEMUA ITEM KERANJANG
+        function renderCartItems() {
+            const container = document.getElementById('cart-items-container');
+            const cart = getCart();
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-box-open empty-icon"></i>
+                    <p>Oops, keranjang Anda masih kosong.</p>
+                    <a href="index.html" class="btn-primary-ghost">
+                        <i class="fas fa-utensils"></i> Mulai Pesan Sekarang
+                    </a>
+                </div>
+                `;
+                document.getElementById('checkout-btn').disabled = true;
+                document.getElementById('empty-cart-message').style.display = 'block';
+            } else {
+                container.innerHTML = cart.map(createCartItemHTML).join('');
+                document.getElementById('checkout-btn').disabled = false;
+                document.getElementById('empty-cart-message').style.display = 'none';
+            }
+        }
+
+        // FUNGSI UNTUK MENGUPDATE RINGKASAN HARGA
+        function updateSummary() {
+            const cart = getCart();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPayment = subtotal + SERVICE_FEE;
+
+            document.getElementById('total-items-count').textContent = totalItems;
+            document.getElementById('subtotal-price').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('service-fee').textContent = `Rp ${SERVICE_FEE.toLocaleString('id-ID')}`;
+            document.getElementById('total-payment').textContent = `Rp ${totalPayment.toLocaleString('id-ID')}`;
+        }
+
+        // FUNGSI MODAL CHECKOUT
+        function showCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.add('is-visible');
+        }
+
+        function handleCheckout() {
+            if (getCart().length > 0) {
+                // Simulasikan proses checkout, abis itu  hapus keranjang,
+                // kalo misalkan keranjangnya gamau di kosongin pemanggilan function dibawah ini bisa apus ya
+                localStorage.removeItem('cart');
+                showCheckoutModal();
+            }
+        }
+
+        // Event listener untuk tombol checkout
+        document.getElementById('checkout-btn').addEventListener('click', handleCheckout);
+
+
+        // Panggil saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCartItems();
+            updateSummary();
+        });
+    </script>
+</body>
+
+</html>

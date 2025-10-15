@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoHuB Menu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<!-- Tampilan Pembuka (Welcome Screen) -->
+<div id="welcome-screen" class="welcome-screen">
+  <div class="welcome-box">
+    <h2>Selamat Datang di <span>GoHuB Menu</span> </h2>
+    <p>Siap pesan makanan favoritmu hari ini?</p>
+    <button id="welcome-btn" class="welcome-btn">Oke, Lanjut</button>
+  </div>
+</div>
+
+
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a class="brand-logo" href="#home"> <i class="fas fa-utensils logo-icon"></i>GoHuB Menu</a>
+            <div class="cart-link-wrapper">
+                <a href="cart.html" class="cart-icon-link" aria-label="Lihat Keranjang">
+                    <i class="fas fa-shopping-cart cart-icon-base"></i>
+                    <span id="cart-count" class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container main-content-padding">
+
+        <header class="page-header">
+            <h1>Pesan Mudah, Makan Nikmat!</h1>
+            <p>Pilih menu favorit Anda dari GoHuB Menu. Kualitas bintang lima, harga kaki lima!</p>
+        </header>
+
+        <section class="menu-section">
+            <h2 class="section-title"><i class="fas fa-drumstick-bite section-icon"></i> Menu Makanan</h2>
+            <div class="menu-grid" id="food-menu">
+
+              
+            </div>
+        </section>
+
+        <section class="menu-section">
+            <h2 class="section-title"><i class="fas fa-mug-hot section-icon"></i> Menu Minuman</h2>
+            <div class="menu-grid" id="drink-menu">
+               
+
+            </div
+        </section>
+
+    </main>
+
+
+    <div id="cart-modal" class="modal-overlay">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <i class="fas fa-check-circle modal-icon-success"></i>
+                <h4 class="modal-title-custom">Berhasil!</h4>
+            </div>
+            <div class="modal-body-custom">
+                <p>Produk <span id="modal-item-name" style="font-weight: 600;"></span> berhasil ditambahkan ke
+                    keranjang!</p>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn-secondary-custom" onclick="closeModal()">Lanjut Belanja</button>
+                <a href="cart.html" class="btn-primary-custom">Lihat Keranjang <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
