@@ -1,63 +1,18 @@
-// ini file javascript untuk nyimpen data menu, logika nambahin ke keranjang 
-// dan juga bikin elemen baru di html berupa product card 
-// kalo misalkan nanti mau bikin logika get data dari DB juga bisa dari sini,
-//  tinggal ubah aja menudata nya jadi get api
+// --- FUNGSI UTAMA UNTUK AMBIL DATA MENU DARI SERVER ewewewewewe ---
+async function fetchMenuData() {
+  try {
+    const response = await fetch('http://localhost:8080/api/menu');
+    const data = await response.json();
 
-//tes dana
-// tes daffa
-// --- DATA MENU ---
-const menuData = {
-  food: [
-    { 
-      id: 1, 
-      name: 'Nasi Goreng', 
-      price: 28000, 
-      description: 'Nasi goreng dengan bumbu rempah spesial dan telur mata sapi.', 
-      image: 'img/nasigoreng.jpg' 
-    },
-    { 
-      id: 2, 
-      name: 'Mie Ayam', 
-      price: 20000, 
-      description: 'Mie kenyal, potongan ayam melimpah, dan pangsit renyah.', 
-      image: 'img/mieayam.jpg' 
-    },
-    { 
-      id: 3, 
-      name: 'Bakso Urat', 
-      price: 18000, 
-      description: 'Bakso urat super pedas dengan kuah kaldu gurih.', 
-      image: 'img/bakso.jpg' 
-      
-    },
-    { 
-      id: 4, 
-      name: 'Nasi Ayam Betutu', 
-      price: 25000, 
-      description: 'Nasi ayam betutu khas Bali.', 
-      image: 'img/betutu.jpg' 
-      
-    },
-    // bisa nambahin menu makanan yg lainnya kalo mau disini, ikutin struktur yg udah ada
-  ],
-  drink: [
-    { 
-      id: 5, 
-      name: 'Es Teh Manis', 
-      price: 8000, 
-      description: 'Teh segar dengan gula alami.', 
-      image: 'img/esteh.jpg' 
-    },
-    { 
-      id: 6, 
-      name: 'Es Jeruk Nipis', 
-      price: 12000, 
-      description: 'Perasan jeruk nipis asli, menyegarkan dan kaya vitamin.', 
-      image: 'img/esjeruk.jpg' 
-    },
-    // bisa tambahin menu minuman yg lainnya kalo mau disini, ikutin struktur yg udah ada
-  ]
-};
+    // Pisahkan berdasarkan kategori (misal: food / drink)
+    const foodItems = data.filter(item => item.category === 'food');
+    const drinkItems = data.filter(item => item.category === 'drink');
+
+    renderMenu(foodItems, drinkItems);
+  } catch (error) {
+    console.error('Gagal mengambil data menu:', error);
+  }
+}
 
 // --- FUNGSI UTAMA RENDERING CARD ---
 function createMenuCard(item) {
@@ -86,15 +41,15 @@ function createMenuCard(item) {
   `;
 }
 
-function renderMenu() {
+function renderMenu(foodData, drinkData) {
   const foodContainer = document.getElementById('food-menu');
   const drinkContainer = document.getElementById('drink-menu');
 
-  foodContainer.innerHTML = menuData.food.map(createMenuCard).join('');
-  drinkContainer.innerHTML = menuData.drink.map(createMenuCard).join('');
+  foodContainer.innerHTML = foodData.map(createMenuCard).join('');
+  drinkContainer.innerHTML = drinkData.map(createMenuCard).join('');
 }
 
-// --- FUNGSI KERANJANG & MODAL ---
+// --- FUNGSI KERANJANG ---
 function getCart() {
   const cart = localStorage.getItem('cart');
   return cart ? JSON.parse(cart) : [];
@@ -138,46 +93,6 @@ function addToCart(id, name, price, image) {
 
 // Panggil render menu dan update keranjang saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
-  renderMenu();
+  fetchMenuData();
   updateCartCount();
-});
-
-// === WELCOME POPUP LOGIC (muncul saat pertama buka & setiap refresh, tapi gak pas balik dari cart) ===
-document.addEventListener("DOMContentLoaded", () => {
-  const welcomeScreen = document.getElementById("welcome-screen");
-  const welcomeBtn = document.getElementById("welcome-btn");
-
-  // cek apakah user datang dari halaman cart
-  const fromCart = document.referrer.includes("cart.html");
-
-  // kalau datang dari cart, jangan tampilkan popup
-  if (fromCart) {
-    welcomeScreen.style.display = "none";
-    return;
-  }
-
-  // hapus flag popup tiap kali halaman direfresh
-  window.addEventListener("beforeunload", () => {
-    sessionStorage.removeItem("hasSeenPopup");
-  });
-
-  // cek apakah user udah lihat popup di sesi ini
-  const hasSeenPopup = sessionStorage.getItem("hasSeenPopup");
-
-  if (hasSeenPopup) {
-    // kalau udah lihat → langsung sembunyikan popup
-    welcomeScreen.style.display = "none";
-  } else {
-    // kalau belum → tampilkan popup
-    welcomeScreen.style.display = "flex";
-  }
-
-  // tombol "Oke, Lanjut"
-  welcomeBtn.addEventListener("click", () => {
-    welcomeScreen.classList.add("hidden");
-    sessionStorage.setItem("hasSeenPopup", "true");
-    setTimeout(() => {
-      welcomeScreen.style.display = "none";
-    }, 400);
-  });
 });

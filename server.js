@@ -1,51 +1,43 @@
-// --- Import module ---
-const express = require("express");
-const mysql = require("mysql2");
-const cors = require("cors");
+const express = require('express');
+const mysql = require('mysql');
+const path = require('path');
 
-// --- Setup express app ---
+// Koneksi Database
+const db = mysql.createConnection({
+    host: 'localhost',     // ✅ perbaikan
+    user: 'root',
+    password: '',
+    database: 'gohub'
+});
+
+db.connect(err => {
+    if (err) throw err;
+    console.log('Database connected!');
+});
+
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// Melayani file static seperti HTML, CSS, JS
 app.use(express.static(__dirname));
 
-// --- Koneksi ke database ---
-const db = mysql.createConnection({
-  host: "localhost", // biasanya localhost
-  user: "root", // username default phpMyAdmin
-  password: "", // kalau di XAMPP biasanya kosong
-  database: "gohub_db", // nama database kamu
+// Route utama (halaman index)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+// tes dana
+// Jalankan server
+app.listen(8080, () => {
+    console.log('Server running on http://localhost:8080');
 });
 
-// --- Cek koneksi ---
-db.connect((err) => {
-  if (err) {
-    console.error("❌ Gagal konek ke database:", err);
-  } else {
-    console.log("✅ Berhasil konek ke database MySQL");
-  }
-});
-
-// --- API GET menu makanan ---
-app.get("/api/food", (req, res) => {
-  const sql = "SELECT * FROM food_menu";
+app.get('/api/menu', (req, res) => {
+  const sql = 'SELECT * FROM menu';
   db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      console.error('Error fetching data:', err);
+      res.status(500).send('Database error');
+      return;
+    }
     res.json(results);
   });
-});
-
-// --- API GET menu minuman ---
-app.get("/api/drink", (req, res) => {
-  const sql = "SELECT * FROM drink_menu";
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
-  });
-});
-
-// --- Jalankan server ---
-const PORT = 8080;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
