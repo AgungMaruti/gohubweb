@@ -1,4 +1,4 @@
-// --- FUNGSI UTAMA UNTUK AMBIL DATA MENU DARI SERVER ewewewewewe ---
+// --- FUNGSI UTAMA UNTUK AMBIL DATA MENU DARI SERVER ---
 async function fetchMenuData() {
   try {
     const response = await fetch('http://localhost:8080/api/menu');
@@ -95,4 +95,45 @@ function addToCart(id, name, price, image) {
 document.addEventListener('DOMContentLoaded', () => {
   fetchMenuData();
   updateCartCount();
+});
+
+// === WELCOME POPUP LOGIC (muncul saat pertama buka & setiap refresh, tapi gak pas balik dari cart) ===
+document.addEventListener("DOMContentLoaded", () => 
+{
+  const welcomeScreen = document.getElementById("welcome-screen");
+  const welcomeBtn = document.getElementById("welcome-btn");
+
+  // cek apakah user datang dari halaman cart
+  const fromCart = document.referrer.includes("cart.html");
+
+  // kalau datang dari cart, jangan tampilkan popup
+  if (fromCart) {
+    welcomeScreen.style.display = "none";
+    return;
+  }
+
+  // hapus flag popup tiap kali halaman direfresh
+  window.addEventListener("beforeunload", () => {
+    sessionStorage.removeItem("hasSeenPopup");
+  });
+
+  // cek apakah user udah lihat popup di sesi ini
+  const hasSeenPopup = sessionStorage.getItem("hasSeenPopup");
+
+  if (hasSeenPopup) {
+    // kalau udah lihat → langsung sembunyikan popup
+    welcomeScreen.style.display = "none";
+  } else {
+    // kalau belum → tampilkan popup
+    welcomeScreen.style.display = "flex";
+  }
+
+  // tombol "Oke, Lanjut"
+  welcomeBtn.addEventListener("click", () => {
+    welcomeScreen.classList.add("hidden");
+    sessionStorage.setItem("hasSeenPopup", "true");
+    setTimeout(() => {
+      welcomeScreen.style.display = "none";
+    }, 400);
+  });
 });
