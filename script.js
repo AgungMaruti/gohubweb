@@ -3,7 +3,7 @@
 // kalo misalkan nanti mau bikin logika get data dari DB juga bisa dari sini,
 //  tinggal ubah aja menudata nya jadi get api
 
-
+//tes dana
 // --- DATA MENU ---
 const menuData = {
   food: [
