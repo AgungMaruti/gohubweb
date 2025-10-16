@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoHuB Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <h1>GoHuB Admin Panel</h1>
+
+  <section class="admin-form">
+    <h2>Tambah / Edit Produk</h2>
+    <form id="productForm">
+      <input type="hidden" id="productId">
+      <input type="text" id="name" placeholder="Nama Produk" required>
+      <input type="number" id="price" placeholder="Harga" required>
+      <input type="text" id="description" placeholder="Deskripsi" required>
+      <input type="text" id="image" placeholder="URL Gambar" required>
+      <select id="category" required>
+        <option value="">Pilih Kategori</option>
+        <option value="food">Makanan</option>
+        <option value="drink">Minuman</option>
+      </select>
+      <button type="submit">Simpan</button>
+    </form>
+  </section>
+
+  <section class="admin-table">
+    <h2>Daftar Produk</h2>
+    <table border="1" id="productTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nama</th>
+          <th>Harga</th>
+          <th>Deskripsi</th>
+          <th>Gambar</th>
+          <th>Kategori</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</body>
+</html>
